@@ -1,6 +1,7 @@
 <div align="center">
 <h1>Hexo Info Api</h1>
-<a href="https://www.npmjs.com/package/hexo-info-api"><img src="https://img.shields.io/npm/v/hexo-info-api"></a>
+<a href="https://www.npmjs.com/package/hexo-info-api"><img src="https://img.shields.io/npm/v/hexo-info-api"></a>&nbsp;
+<a href="https://github.com/0ojixueseno0/hexo-info-api"><img src="https://img.shields.io/github/stars/0ojixueseno0/hexo-info-api?style=social"></a>
 </div>
 
 ## Install
