@@ -10,8 +10,7 @@ const config = hexo.config.hexo_info_api == null ? defaultConfig : hexo.config.h
 
 var api = {}
 
-hexo.extend.filter.register('before_generate', function(){
-    hexo.log.info("hexo-info-api: prepareing api data...")
+function refreshAPIData() {
     api = {  
         getPostCount: {
             type: "getPostCount",
@@ -32,6 +31,11 @@ hexo.extend.filter.register('before_generate', function(){
             }
         }
     }
+}
+
+hexo.extend.filter.register('before_generate', function(){
+    hexo.log.info("hexo-info-api: prepareing api data...")
+    refreshAPIData();
 })
 
 function setHeader(req, res, next){
@@ -57,6 +61,7 @@ hexo.extend.filter.register('server_middleware', function(app){
 // })
 
 hexo.extend.generator.register('api', function(locals){
+    refreshAPIData();
     var enableApi = [];
     if(config.enableGetPostCount) enableApi.push(
         {
