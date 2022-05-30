@@ -1,0 +1,15 @@
+{
+  "name": "hexo-info-api",
+  "version": "0.0.1",
+  "description": "generate interface for blog infomation",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "hexo",
+    "plugin"
+  ],
+  "author": "jz0ojiang",
+  "license": "MIT"
+}
