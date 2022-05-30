@@ -8,30 +8,31 @@ const defaultConfig = {
 
 const config = hexo.config.hexo_info_api == null ? defaultConfig : hexo.config.hexo_info_api
 
-var api = {  
-    getPostCount: {
-        type: "getPostCount",
-        data: {
-            count: hexo.locals.get('posts').length
-        }
-    },
-    getInfo: {
-        type: "getInfo",
-        data: {
-            title: hexo.config.title,
-            subtitle: hexo.config.subtitle,
-            description: hexo.config.description,
-            author: hexo.config.author,
-            language: hexo.config.language,
-            timezone: hexo.config.timezone,
-            url: hexo.config.url,
+var api = {}
+
+hexo.extend.filter.register('before_generate', function(){
+    hexo.log.info("hexo-info-api: prepareing api data...")
+    api = {  
+        getPostCount: {
+            type: "getPostCount",
+            data: {
+                count: hexo.locals.get('posts').length
+            }
+        },
+        getInfo: {
+            type: "getInfo",
+            data: {
+                title: hexo.config.title,
+                subtitle: hexo.config.subtitle,
+                description: hexo.config.description,
+                author: hexo.config.author,
+                language: hexo.config.language,
+                timezone: hexo.config.timezone,
+                url: hexo.config.url,
+            }
         }
     }
-}
-
-// hexo.extend.filter.register('before_generate', function(){
-//     console.log("hexo-info-api: prepareing api data...")
-// })
+})
 
 function setHeader(req, res, next){
     res.setHeader('Access-Control-Allow-Origin', config.allowOrigin);
@@ -56,15 +57,16 @@ hexo.extend.filter.register('server_middleware', function(app){
 // })
 
 hexo.extend.generator.register('api', function(locals){
-    // Array
-    // hexo.theme.setView('api.ejs', layout);
-    return [
+    var enableApi = [];
+    if(config.enableGetPostCount) enableApi.push(
         {
             path: 'api/getPostCount/',
             data: JSON.stringify(api.getPostCount).replace(/[\u007F-\uFFFF]/g, function(chr) {
                 return "\\u" + ("0000" + chr.charCodeAt(0).toString(16)).substr(-4)
             })
-        },
+        }
+    );
+    if(config.enableGetInfo) enableApi.push(
         {
             path: 'api/getInfo/',
             // data: JSON.stringify(api.getInfo)
@@ -72,5 +74,6 @@ hexo.extend.generator.register('api', function(locals){
                 return "\\u" + ("0000" + chr.charCodeAt(0).toString(16)).substr(-4)
             })
         }
-    ];
+    );
+    return enableApi;
   }); 
