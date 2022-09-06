@@ -1,6 +1,6 @@
 {
   "name": "hexo-info-api",
-  "version": "0.0.3",
+  "version": "0.1.0",
   "description": "generate interface for blog infomation",
   "main": "index.js",
   "scripts": {
@@ -15,5 +15,8 @@
   "repository": {
     "type": "git",
     "url": "git://github.com/0ojixueseno0/hexo-info-api.git"
+  },
+  "dependencies": {
+    "body-parser": "^1.20.0"
   }
 }

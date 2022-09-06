@@ -1,47 +1,23 @@
+/* hexo plugin */
+
+'use strict';
+
+const fs = require('hexo-fs');
 const bodyParser = require('body-parser');
 
-const defaultConfig = {
-    "allowOrigin": "",
-    "enableGetPostCount": true,
-    "enableGetInfo": true
-}
+hexo.config.hexo_info_api = Object.assign({
+    allowOrigin: "",
+    enable: [],
+    disable_default_api: false,
+}, hexo.config.hexo_info_api);
 
-const config = hexo.config.hexo_info_api == null ? defaultConfig : hexo.config.hexo_info_api
+hexo.log.debug(`hexo-info-api: config = ${JSON.stringify(hexo.config.hexo_info_api)}`);
 
-var api = {}
-
-function refreshAPIData() {
-    api = {  
-        getPostCount: {
-            type: "getPostCount",
-            data: {
-                count: hexo.locals.get('posts').length
-            }
-        },
-        getInfo: {
-            type: "getInfo",
-            data: {
-                title: hexo.config.title,
-                subtitle: hexo.config.subtitle,
-                description: hexo.config.description,
-                author: hexo.config.author,
-                language: hexo.config.language,
-                timezone: hexo.config.timezone,
-                url: hexo.config.url,
-            }
-        }
-    }
-}
-
-hexo.extend.filter.register('before_generate', function(){
-    hexo.log.info("hexo-info-api: prepareing api data...")
-    refreshAPIData();
-})
-
+// 设置响应头与跨域
 function setHeader(req, res, next){
-    res.setHeader('Access-Control-Allow-Origin', config.allowOrigin);
+    res.setHeader('Access-Control-Allow-Origin', hexo.config.hexo_info_api.allowOrigin);
     res.setHeader('Access-Control-Allow-Credentials', 'true');
-    // res.writeHead(200, {'Content-Type': 'application/json; charset=utf-8'});
+    res.setHeader('Content-Type', 'application/json; charset=utf-8');
     next();
 }
 
@@ -50,35 +26,20 @@ hexo.extend.filter.register('server_middleware', function(app){
     app.use(hexo.config.root + 'api/', bodyParser.json({
         limit: '50mb'
     }));
-    
-  }, 1);
+}, 1);
 
-// hexo.extend.filter.register('server_middleware', function(app){
-//     app.use(hexo.config.root + 'api/', function(req, res, next){
-//         res.setHeader('Content-Type', 'application/json; charset=utf-8');
-//         next();
-//     });
-// })
+// 从 ./lib/api/ 下加载 api
+// 只有在 config.hexo_info_api.enable 中的 api 才会被加载
+// api 的文件名必须和 api 的名称一致
+hexo.config.hexo_info_api.enable.forEach(api => {
+    if (fs.existsSync(__dirname + '/lib/api/' + api + '.js')) {
+        hexo.extend.generator.register(`api.${api}`, require(`./lib/api/${api}`));
+        hexo.log.debug(`hexo-info-api: [${api}] api enabled`);
+    } else {
+        hexo.log.warn(`hexo-info-api: api [${api}] not found! Please check your config file.`);
+    }
+});
 
-hexo.extend.generator.register('api', function(locals){
-    refreshAPIData();
-    var enableApi = [];
-    if(config.enableGetPostCount) enableApi.push(
-        {
-            path: 'api/getPostCount/',
-            data: JSON.stringify(api.getPostCount).replace(/[\u007F-\uFFFF]/g, function(chr) {
-                return "\\u" + ("0000" + chr.charCodeAt(0).toString(16)).substr(-4)
-            })
-        }
-    );
-    if(config.enableGetInfo) enableApi.push(
-        {
-            path: 'api/getInfo/',
-            // data: JSON.stringify(api.getInfo)
-            data: JSON.stringify(api.getInfo).replace(/[\u007F-\uFFFF]/g, function(chr) {
-                return "\\u" + ("0000" + chr.charCodeAt(0).toString(16)).substr(-4)
-            })
-        }
-    );
-    return enableApi;
-  }); 
+// 默认接口 返回所有已开启的接口列表
+if (!hexo.config.hexo_info_api.disable_default_api) 
+    hexo.extend.generator.register("api", require("./lib/api/default"));

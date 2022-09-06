@@ -4,9 +4,9 @@
 <a href="https://github.com/0ojixueseno0/hexo-info-api"><img src="https://img.shields.io/github/stars/0ojixueseno0/hexo-info-api?style=social"></a>
 </div>
 
-[中文文档](./README_zh.md)
+[en](./README.md)
 
-## Install
+## 安装
 
 ```sh
 # npm
@@ -16,14 +16,14 @@ npm install hexo-info-api --save
 yarn add hexo-info-api
 ```
 
-## Config
+## 配置
 
-add the following to _config.yml
+向 hexo 的配置文件 _config.yml 中添加以下内容
 
 ```yaml
 hexo_info_api:
-  allowOrigin: "*" # Set to "*" to allow all origins (Access-Control-Allow-Origin)
-  enable: # enable what api u need
+  allowOrigin: "*" # 设置为 "*" 以允许所有源访问 (跨域访问 Access-Control-Allow-Origin)
+  enable: # 启用你需要的 api 接口 (只有在这里启用的 api 才会生效)
   - getInfo
   - getPostCount
   - getPosts
@@ -35,21 +35,22 @@ hexo_info_api:
   - getPostById
   - getCategories
   - getTags
-  # Disable default api(host:port/api/) default: false
+  # 禁用默认 api (host:port/api/) 默认: false
+  # 该 api 的作用为返回所有启用的 api 接口
   disable_default_api: false 
 ```
 
-## Run (Test)
+## 运行 (测试)
 
 ```sh
 hexo s
 
-#Open http://localhost:4000/api/ to see what api u enabled
+#访问 http://localhost:4000/api/ 查看你启用的 api 接口
 ```
 
-## Result
+## 返回结果
 
-This is the result of the GET /api/getPostCount endpoint.
+这是 GET /api/getPostCount 接口的返回结果
 
 ```json
 {
@@ -60,6 +61,4 @@ This is the result of the GET /api/getPostCount endpoint.
 }
 ```
 
-*Other api response is similar to this.*
-
-*You can see all the api in [hexo-info-api wiki](https://github.com/0ojixueseno0/hexo-info-api/wiki)*
+*其他接口对应结构请前往 Github 仓库 wiki [查看](https://github.com/0ojixueseno0/hexo-info-api/wiki)*
