@@ -35,6 +35,8 @@ hexo_info_api:
   - getPostById
   - getCategories
   - getTags
+  - getLatestPost
+  - getLatest5Posts
   # 禁用默认 api (host:port/api/) 默认: false
   # 该 api 的作用为返回所有启用的 api 接口
   disable_default_api: false 

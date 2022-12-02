@@ -35,6 +35,8 @@ hexo_info_api:
   - getPostById
   - getCategories
   - getTags
+  - getLatestPost
+  - getLatest5Posts
   # Disable default api(host:port/api/) default: false
   disable_default_api: false 
 ```
