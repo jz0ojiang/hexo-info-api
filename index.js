@@ -33,7 +33,10 @@ hexo.extend.filter.register('server_middleware', function(app){
 // api 的文件名必须和 api 的名称一致
 hexo.config.hexo_info_api.enable.forEach(api => {
     if (fs.existsSync(__dirname + '/lib/api/' + api + '.js')) {
-        hexo.extend.generator.register(`api.${api}`, require(`./lib/api/${api}`));
+        let apiMethod = require(`./lib/api/${api}`);
+        hexo.extend.generator.register(`api.${api}`, function(){
+            return apiMethod(hexo);
+        });
         hexo.log.debug(`hexo-info-api: [${api}] api enabled`);
     } else {
         hexo.log.warn(`hexo-info-api: api [${api}] not found! Please check your config file.`);
